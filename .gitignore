@@ -1,0 +1,8 @@
+
+*.project
+*.jar
+*.properties
+*.prefs
+*.MF
+*.jar
+BackEnd/Application/application/.classpath
