@@ -4,5 +4,6 @@
 *.properties
 *.prefs
 *.MF
-*.jar
+WP*
 BackEnd/Application/application/.classpath
+
