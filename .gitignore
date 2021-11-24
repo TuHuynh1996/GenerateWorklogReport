@@ -9,3 +9,6 @@ WP*
 BackEnd/Application/library/target/**
 BackEnd/Application/application/target/**
 BackEnd/Application/application/target/**.class
+*.jar
+WP*
+BackEnd/Application/application/.classpath
