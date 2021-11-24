@@ -7,6 +7,5 @@
 WP*
 *.classpath
 BackEnd/Application/library/target/**
-BackEnd/Application/application/target/classes/gwr/application/dto/SampleDto.class
-BackEnd/Application/application/target/classes/gwr/application/dto/SampleDto.class
-BackEnd/Application/application/target/classes/gwr/application/dto/SampleDto.class
+BackEnd/Application/application/target/**
+BackEnd/Application/application/target/**.class
