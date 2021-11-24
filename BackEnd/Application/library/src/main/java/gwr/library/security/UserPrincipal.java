@@ -1,4 +1,4 @@
-package gwr.application.security;
+package gwr.library.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,10 +9,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import gwr.library.entity.Users;
+import lombok.Data;
 
 /**
  * The Class UserPrincipal.
  */
+@Data
 public class UserPrincipal implements UserDetails {
 	
 	/** The Constant serialVersionUID. */
