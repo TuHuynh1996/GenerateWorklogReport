@@ -1,4 +1,4 @@
-package gwr.application.security;
+package gwr.library.security;
 
 
 import org.springframework.security.core.userdetails.UserDetails;
