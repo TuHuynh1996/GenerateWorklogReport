@@ -9,3 +9,5 @@ WP*
 BackEnd/Application/library/target/**
 BackEnd/Application/application/target/**
 BackEnd/Application/application/target/**.class
+BackEnd/Application/library/target/**
+BackEnd/Application/library/target/**.class
