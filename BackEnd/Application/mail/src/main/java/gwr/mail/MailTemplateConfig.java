@@ -3,19 +3,20 @@ package gwr.mail;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 @Configuration
 public class MailTemplateConfig {
+    
 	@Bean
 	public ITemplateResolver templateResolver()
 	{
 	    ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
 	    templateResolver.setPrefix("mail/");
 	    templateResolver.setSuffix(".html");
-	    templateResolver.setTemplateMode(StandardTemplateModeHandlers.HTML5.getTemplateModeName());
+	    templateResolver.setTemplateMode(TemplateMode.HTML);
 
 	    return templateResolver;
 	}

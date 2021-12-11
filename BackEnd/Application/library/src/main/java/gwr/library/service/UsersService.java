@@ -9,7 +9,6 @@ import gwr.library.entity.Users;
 /**
  * The Interface UsersService.
  */
-@Service
 public interface UsersService {
 
 	/**

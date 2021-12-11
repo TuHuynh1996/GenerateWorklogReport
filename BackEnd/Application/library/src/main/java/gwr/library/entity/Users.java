@@ -1,7 +1,7 @@
 package gwr.library.entity;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,5 +41,5 @@ public class Users extends BaseEntity implements Serializable{
 	@JoinTable(name = "user_role", // name of middlemen table
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles;
+	private List<Role> roles;
 }

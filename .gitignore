@@ -13,3 +13,4 @@ BackEnd/Application/library/target/**
 BackEnd/Application/library/target/**.class
 *.jar
 WP*
+**/target/**

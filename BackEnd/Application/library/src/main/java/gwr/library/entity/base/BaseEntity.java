@@ -46,6 +46,9 @@ public abstract class BaseEntity {
     protected void prePersist() {
     	String userNm = SecurityContextHolderUlti.getCurrentUserName();
     	this.createBy = userNm;
+    	this.updateBy = userNm;
+    	this.createDate = LocalDateTime.now();
+    	this.updataDate = LocalDateTime.now();
     }
 
     /**
@@ -54,7 +57,8 @@ public abstract class BaseEntity {
     @PreUpdate
     protected void preUpdate() {
     	String userNm = SecurityContextHolderUlti.getCurrentUserName();
-    	this.updateBy = userNm;
+        this.updateBy = userNm;
+        this.updataDate = LocalDateTime.now();
     }
     
     /**

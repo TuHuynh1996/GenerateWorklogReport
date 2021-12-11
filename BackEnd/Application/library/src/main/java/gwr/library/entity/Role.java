@@ -1,7 +1,7 @@
 package gwr.library.entity;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,5 +30,5 @@ public class Role extends BaseEntity implements Serializable{
 
 	/** The users. */
 	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY) // variable mapping of class Student
-	private Set<Users> users;
+	private List<Users> users;
 }
