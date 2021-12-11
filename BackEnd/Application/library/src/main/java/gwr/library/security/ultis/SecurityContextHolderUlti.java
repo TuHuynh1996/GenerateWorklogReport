@@ -34,7 +34,7 @@ public class SecurityContextHolderUlti {
 		try {
 			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if (principal instanceof UserPrincipal) {
-				return ((UserPrincipal) principal).getUser().getName();
+				return ((UserPrincipal) principal).getUser().getUserName();
 			} else {
 				return SecurityContextHolder.getContext().getAuthentication().getName();
 			}

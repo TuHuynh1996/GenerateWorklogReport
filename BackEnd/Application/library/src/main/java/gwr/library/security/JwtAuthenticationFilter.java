@@ -2,7 +2,6 @@ package gwr.library.security;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,10 +14,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import gwr.library.entity.Users;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import gwr.library.entity.Users;
+import gwr.library.security.ultis.JwtTokenUtil;
 
 /**
  * The Class JwtAuthenticationFilter.
@@ -28,17 +27,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	/** The authentication manager. */
 	private AuthenticationManager authenticationManager;
 	
-	/** The secret key. */
-	private String secretKey;
-
+	private JwtTokenUtil jwtTokenUtil;
+	
 	/**
 	 * Instantiates a new jwt authentication filter.
 	 *
 	 * @param authenticationManager the authentication manager
 	 */
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, String secretKey) {
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
 		this.authenticationManager = authenticationManager;
-		this.secretKey = secretKey;
+		this.jwtTokenUtil = jwtTokenUtil;
 	}
 
 	/*
@@ -66,7 +64,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		// Create login token
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-				credentials.getName(), credentials.getPassword(), new ArrayList<>());
+				credentials.getUserName(), credentials.getPassword(), new ArrayList<>());
 
 		// Authenticate user
 		Authentication auth = authenticationManager.authenticate(authenticationToken);
@@ -89,9 +87,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		UserPrincipal principal = (UserPrincipal) authResult.getPrincipal();
 
 		// Create JWT Token
-		String token = JWT.create().withSubject(principal.getUsername())
-				.withExpiresAt(new Date(System.currentTimeMillis() + 864_000_000)) // 10 days
-				.sign(Algorithm.HMAC512(secretKey.getBytes()));
+		String token = jwtTokenUtil.generateToken(principal);
 
 		// Add token in response
 		response.addHeader("Authorization", "Bearer " + token);

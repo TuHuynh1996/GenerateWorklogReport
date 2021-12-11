@@ -2,9 +2,11 @@ package gwr.library.security;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import gwr.library.repository.UserRepository;
-import lombok.var;
+import gwr.library.security.ultis.JwtTokenUtil;
 
 /**
  * The Class SecurityConfiguration.
@@ -36,6 +38,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("#{${security.authorize}}")
     Map<String, String[]> securityAuthorize;
+    
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     /**
      * Instantiates a new security configuration.
@@ -75,8 +80,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // add jwt filters (1. authentication, 2. authorization)
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), secretKey))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, secretKey))
+//                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenUtil))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, jwtTokenUtil))
                 .authorizeRequests()
                 // configure access rules
                 .antMatchers(securityAuthorize.get("ignore")).permitAll()
@@ -98,6 +103,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setUserDetailsService(this.userPrincipalDetailsService);
 
         return daoAuthenticationProvider;
+    }
+    
+    @Override @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     /**

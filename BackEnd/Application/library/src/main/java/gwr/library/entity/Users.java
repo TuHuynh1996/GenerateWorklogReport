@@ -12,14 +12,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import gwr.library.entity.base.BaseEntity;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The Class Users.
  */
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper=false)
 public class Users extends BaseEntity implements Serializable{
 
 	/** The Constant serialVersionUID. */
@@ -31,15 +37,21 @@ public class Users extends BaseEntity implements Serializable{
 	private Integer id;
 	
 	/** The name. */
-	private String name;
+	private String userName;
 	
 	/** The password. */
 	private String password;
 
 	/** The roles. */
+	@JsonIgnoreProperties 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_role", // name of middlemen table
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private List<Role> roles;
+
+    @Override
+    public String toString() {
+        return "Users [id=" + id + ", userName=" + userName + ", password=" + password + ", roles=" + roles + "]";
+    }
 }

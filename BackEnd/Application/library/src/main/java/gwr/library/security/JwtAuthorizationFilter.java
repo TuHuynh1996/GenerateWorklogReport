@@ -13,83 +13,86 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import gwr.library.entity.Users;
 import gwr.library.repository.UserRepository;
+import gwr.library.security.ultis.JwtTokenUtil;
 
 /**
  * The Class JwtAuthorizationFilter.
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-	
-	/** The user repository. */
-	private UserRepository userRepository;
-	
-	/** The secret key. */
-	private String secretKey;
 
-	/**
-	 * Instantiates a new jwt authorization filter.
-	 *
-	 * @param authenticationManager the authentication manager
-	 * @param userRepository the user repository
-	 */
-	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, String secretKey) {
-		super(authenticationManager);
-		this.userRepository = userRepository;
-		this.secretKey = secretKey;
-	}
+    /** The user repository. */
+    private UserRepository userRepository;
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.web.authentication.www.BasicAuthenticationFilter#doFilterInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
-	 */
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		// Read the Authorization header, where the JWT token should be
-		String header = request.getHeader("Authorization");
+    /** The secret key. */
+    private JwtTokenUtil jwtTokenUtil;
 
-		// If header does not contain BEARER or is null delegate to Spring impl and exit
-		if (header == null || !header.startsWith("Bearer ")) {
-			chain.doFilter(request, response);
-			return;
-		}
+    /**
+     * Instantiates a new jwt authorization filter.
+     *
+     * @param authenticationManager the authentication manager
+     * @param userRepository        the user repository
+     */
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository,
+            JwtTokenUtil jwtTokenUtil) {
+        super(authenticationManager);
+        this.userRepository = userRepository;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
-		// If header is present, try grab user principal from database and perform
-		// authorization
-		Authentication authentication = getUsernamePasswordAuthentication(request);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+     * #doFilterInternal(javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
+     */
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        // Read the Authorization header, where the JWT token should be
+        String header = request.getHeader("Authorization");
 
-		// Continue filter execution
-		chain.doFilter(request, response);
-	}
+        // If header does not contain BEARER or is null delegate to Spring impl and exit
+        if (header == null || !header.startsWith("Bearer ")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-	/**
-	 * Gets the username password authentication.
-	 *
-	 * @param request the request
-	 * @return the username password authentication
-	 */
-	private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
-		String token = request.getHeader("Authorization").replace("Bearer ", "");
+        // If header is present, try grab user principal from database and perform
+        // authorization
+        Authentication authentication = getUsernamePasswordAuthentication(request);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		if (token != null) {
-			// parse the token and validate it
-			String userName = JWT.require(Algorithm.HMAC512(secretKey.getBytes())).build().verify(token).getSubject();
+        // Continue filter execution
+        chain.doFilter(request, response);
+    }
 
-			// Search in the DB if we find the user by token subject (username)
-			// If so, then grab user details and create spring auth token using username,
-			// pass, authorities/roles
-			if (userName != null) {
-				Users user = userRepository.findByName(userName);
-				UserPrincipal principal = new UserPrincipal(user);
-				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userName, null,
-						principal.getAuthorities());
-				return auth;
-			}
-			return null;
-		}
-		return null;
-	}
+    /**
+     * Gets the username password authentication.
+     *
+     * @param request the request
+     * @return the username password authentication
+     */
+    private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        // parse the token and validate it
+        String userName = jwtTokenUtil.getUserName(token);
+
+        // Search in the DB if we find the user by token subject (username)
+        // If so, then grab user details and create spring auth token using username,
+        // pass, authorities/roles
+        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // FIXME: have to find another way here
+            Users user = userRepository.findByUserName(userName);
+            UserPrincipal principal = new UserPrincipal(user);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userName, null,
+                    principal.getAuthorities());
+            return auth;
+        }
+        return null;
+
+    }
 }

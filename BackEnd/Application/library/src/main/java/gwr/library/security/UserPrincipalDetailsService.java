@@ -33,7 +33,7 @@ public class UserPrincipalDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Users user = this.userRepository.findByName(s);
+        Users user = this.userRepository.findByUserName(s);
         if(user == null) {
         	throw new UsernameNotFoundException(s);
         }

@@ -5,20 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import gwr.application.dto.SampleDto;
+import gwr.application.model.authentication.AuthenticationRequest;
 import gwr.application.ultis.ExcellUtils;
 import gwr.library.controller.BaseController;
 import gwr.library.entity.Role;
 import gwr.library.entity.Users;
+import gwr.library.security.UserPrincipal;
 import gwr.library.service.UsersService;
 import gwr.mail.MailMessage;
 import gwr.mail.MailService;
@@ -55,6 +62,8 @@ public class DemoController extends BaseController {
         return "test";
     }
 
+
+
     /**
      * Test.
      *
@@ -66,7 +75,7 @@ public class DemoController extends BaseController {
         role.setId(1);
         role.setName("admin");
         Users user = new Users();
-        user.setName("tuhuynh");
+        user.setUserName("tuhuynh");
         user.setPassword(passwordEncoder.encode("12345"));
         List<Role> listRule = new ArrayList<Role>(Arrays.asList(new Role[] { role }));
         user.setRoles(listRule);
