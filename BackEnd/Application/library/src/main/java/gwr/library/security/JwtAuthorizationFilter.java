@@ -11,10 +11,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import gwr.library.entity.Users;
-import gwr.library.repository.UserRepository;
 import gwr.library.security.ultis.JwtTokenUtil;
 
 /**
@@ -23,21 +22,22 @@ import gwr.library.security.ultis.JwtTokenUtil;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     /** The user repository. */
-    private UserRepository userRepository;
 
     /** The secret key. */
     private JwtTokenUtil jwtTokenUtil;
 
-    /**
+    private UserPrincipalDetailsService userDetailsService;
+
+        /**
      * Instantiates a new jwt authorization filter.
      *
      * @param authenticationManager the authentication manager
      * @param userRepository        the user repository
      */
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository,
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserPrincipalDetailsService userDetailsService,
             JwtTokenUtil jwtTokenUtil) {
         super(authenticationManager);
-        this.userRepository = userRepository;
+        this.userDetailsService = userDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
@@ -85,11 +85,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // If so, then grab user details and create spring auth token using username,
         // pass, authorities/roles
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // FIXME: have to find another way here
-            Users user = userRepository.findByUserName(userName);
-            UserPrincipal principal = new UserPrincipal(user);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userName, null,
-                    principal.getAuthorities());
+            UserPrincipal userDetails = (UserPrincipal)this.userDetailsService.loadUserByUsername(userName);
+            
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+
             return auth;
         }
         return null;

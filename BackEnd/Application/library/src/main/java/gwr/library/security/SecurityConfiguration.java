@@ -27,10 +27,8 @@ import gwr.library.security.ultis.JwtTokenUtil;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /** The user principal details service. */
+    @Autowired
     private UserPrincipalDetailsService userPrincipalDetailsService;
-
-    /** The user repository. */
-    private UserRepository userRepository;
 
     /** The secret key. */
     @Value("${jwtproperties.secret}")
@@ -48,10 +46,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * @param userPrincipalDetailsService the user principal details service
      * @param userRepository              the user repository
      */
-    public SecurityConfiguration(UserPrincipalDetailsService userPrincipalDetailsService,
-            UserRepository userRepository) {
+    public SecurityConfiguration(UserPrincipalDetailsService userPrincipalDetailsService) {
         this.userPrincipalDetailsService = userPrincipalDetailsService;
-        this.userRepository = userRepository;
     }
 
     /*
@@ -81,7 +77,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // add jwt filters (1. authentication, 2. authorization)
 //                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenUtil))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, jwtTokenUtil))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userPrincipalDetailsService, jwtTokenUtil))
                 .authorizeRequests()
                 // configure access rules
                 .antMatchers(securityAuthorize.get("ignore")).permitAll()

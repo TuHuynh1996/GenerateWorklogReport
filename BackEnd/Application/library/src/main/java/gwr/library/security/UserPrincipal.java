@@ -50,7 +50,7 @@ public class UserPrincipal implements UserDetails {
 
         // Extract list of roles (ROLE_name)
         this.user.getRoles().forEach(r -> {
-            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + r);
+            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + r.getName());
             authorities.add(authority);
         });
 
