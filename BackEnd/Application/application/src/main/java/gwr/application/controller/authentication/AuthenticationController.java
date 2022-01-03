@@ -49,7 +49,7 @@ public class AuthenticationController {
             response.setJwt(token);
             return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token).body(response);
         } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("fail");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong user name or password");
         }
     }
 }

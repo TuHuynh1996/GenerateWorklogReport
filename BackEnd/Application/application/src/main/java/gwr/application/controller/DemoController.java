@@ -54,6 +54,11 @@ public class DemoController extends BaseController {
     public String test123() {
         return "test";
     }
+    
+    @GetMapping("/test/error")
+    public String testerror() {
+        return 3/0 + "";
+    }
 
 
 

@@ -31,4 +31,7 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
      */
     public Page<Users> findByUserNameLike(String userName, Pageable pageable);
 
+
+    public boolean existsByUserName(String userName);
+
 }

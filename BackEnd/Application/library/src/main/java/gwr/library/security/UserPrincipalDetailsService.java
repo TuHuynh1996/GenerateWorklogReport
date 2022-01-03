@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import gwr.library.entity.Users;
+import gwr.library.enums.ApprovalStatusEnum;
 import gwr.library.repository.UserRepository;
 
 /**
@@ -34,8 +35,8 @@ public class UserPrincipalDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Users user = this.userRepository.findByUserName(s);
-        if(user == null) {
-        	throw new UsernameNotFoundException(s);
+        if (user == null || user.getApprovalStatus() != ApprovalStatusEnum.APPROVED || user.getPassword() == null) {
+            throw new UsernameNotFoundException(s);
         }
         UserPrincipal userPrincipal = new UserPrincipal(user);
 

@@ -9,9 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import gwr.application.model.register.RegisterRequest;
 import gwr.application.model.user.UserRequest;
 import gwr.application.model.user.UserResponse;
 import gwr.library.entity.Users;
+import gwr.library.exception.ResourceNotFoundException;
 import gwr.library.repository.UserRepository;
 
 /**
@@ -67,6 +69,19 @@ public class UsersService {
      */
     public void addUser(Users entity) {
         userRepository.save(entity);
+    }
+
+    /**
+     * Register.
+     *
+     * @param request the request
+     */
+    public void register(RegisterRequest request) throws ResourceNotFoundException {
+        if(userRepository.existsByUserName(request.getUserName())){
+//            throw new 
+        }
+        Users user = modelMapper.map(request, Users.class);
+        userRepository.save(user);
     }
 
 }

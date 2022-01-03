@@ -1,5 +1,7 @@
 package gwr.library.enums.base;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * The Interface CodeEnum.
  */
@@ -10,6 +12,7 @@ public interface CodeEnum {
 	 *
 	 * @return the value
 	 */
+    @JsonValue
 	public String getValue();
 	
 	/**

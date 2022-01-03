@@ -23,4 +23,7 @@ public class UserController {
         var result = userService.getUsers(request, pageable);
         return ResponseEntity.ok().body(result);
     }
+    
+    
+    
 }
