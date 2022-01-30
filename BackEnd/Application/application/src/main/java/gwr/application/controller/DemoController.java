@@ -16,10 +16,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import gwr.application.dto.SampleDto;
 import gwr.application.service.admin.user.UsersService;
-import gwr.application.ultis.ExcellUtils;
 import gwr.library.controller.BaseController;
 import gwr.library.entity.Role;
 import gwr.library.entity.Users;
+import gwr.library.util.ExcelHeaderMapperUtil;
 import gwr.mail.MailMessage;
 import gwr.mail.MailService;
 
@@ -121,17 +121,8 @@ public class DemoController extends BaseController {
 
         try {
             MultipartFile a = file;
-//
-//			System.out.println(a);
-//
-//			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-//			XSSFSheet worksheet = workbook.getSheetAt(0);
-//
-//			for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
-//
-//			}
-            ExcellUtils<SampleDto> excellUtils = new ExcellUtils<SampleDto>(SampleDto.class);
-            List<SampleDto> sampleDtoList = (List<SampleDto>) excellUtils.mapData(file, 10, 0);
+            ExcelHeaderMapperUtil excelHeaderMapper = new ExcelHeaderMapperUtil(file.getInputStream());
+            List<SampleDto> sampleDtoList = excelHeaderMapper.map(SampleDto.class);
 
             return sampleDtoList.toString();
         } catch (Exception e) {
