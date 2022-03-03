@@ -41,5 +41,11 @@
 		    <artifactId>poi-ooxml</artifactId>
 		    <version>5.2.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
+		<dependency>
+		    <groupId>com.amazonaws</groupId>
+		    <artifactId>aws-java-sdk</artifactId>
+		    <version>1.12.169</version>
+		</dependency>
 	</dependencies>
 </project>
