@@ -39,7 +39,7 @@ public class AwsStorageConfig {
      * @return the amazon S3
      */
     @Bean
-    private AmazonS3 gerenateS3client() {
+    public AmazonS3 gerenateS3client() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         return AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(region).build();
     }

@@ -5,9 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +22,7 @@ import gwr.application.service.admin.user.UsersService;
 import gwr.library.controller.BaseController;
 import gwr.library.entity.Role;
 import gwr.library.entity.Users;
+import gwr.library.service.AwsStorageService;
 import gwr.library.util.ExcelHeaderMapperUtil;
 import gwr.mail.MailMessage;
 import gwr.mail.MailService;
@@ -36,6 +40,9 @@ public class DemoController extends BaseController {
     /** The Mail service. */
     @Autowired
     private MailService mailService;
+    
+    @Autowired
+    private AwsStorageService storageService;
 
     /** The password encoder. */
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -53,6 +60,19 @@ public class DemoController extends BaseController {
     @GetMapping("/test/123")
     public String test123() {
         return "test";
+    }
+    
+    @PostMapping("/test/s3/upload")
+    public String uploadFile(@RequestParam("file") MultipartFile multipartFile) throws Exception {
+        return storageService.uploadFile(multipartFile, multipartFile.getOriginalFilename());
+    }
+    @GetMapping("/test/s3/download/{fileName}")
+    public ResponseEntity<?> uploadFile(@PathVariable("fileName") String fileName) throws Exception {
+        byte[] data = storageService.downloadFile(fileName);
+        ByteArrayResource byteArrayResource = new ByteArrayResource(data);
+        return ResponseEntity.ok()
+                .header("Content-disposition", "attachment; filename=\""+fileName+"\"")
+                .body(byteArrayResource);
     }
     
     @GetMapping("/test/error")
