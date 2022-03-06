@@ -64,7 +64,7 @@ public class DemoController extends BaseController {
     
     @PostMapping("/test/s3/upload")
     public String uploadFile(@RequestParam("file") MultipartFile multipartFile) throws Exception {
-        return storageService.uploadFile(multipartFile, multipartFile.getOriginalFilename());
+        return storageService.uploadFile(multipartFile,"folder1/" + multipartFile.getOriginalFilename());
     }
     @GetMapping("/test/s3/download/{fileName}")
     public ResponseEntity<?> uploadFile(@PathVariable("fileName") String fileName) throws Exception {
@@ -73,6 +73,27 @@ public class DemoController extends BaseController {
         return ResponseEntity.ok()
                 .header("Content-disposition", "attachment; filename=\""+fileName+"\"")
                 .body(byteArrayResource);
+    }
+    
+    @GetMapping("/test/s3/list-file")
+    public ResponseEntity<?> listFile() throws Exception {
+        List<String> listFile = storageService.listFiles();
+        return ResponseEntity.ok()
+                .body(listFile);
+    }
+    
+    /**
+     * List file. Not really work
+     *
+     * @param path the path
+     * @return the response entity
+     * @throws Exception the exception
+     */
+    @GetMapping("/test/s3/list-file/{path}")
+    public ResponseEntity<?> listFile(@PathVariable String path) throws Exception {
+        List<String> listFile = storageService.listFilesInPath(path);
+        return ResponseEntity.ok()
+                .body(listFile);
     }
     
     @GetMapping("/test/error")
